@@ -17,8 +17,8 @@ CREATE TABLE exchange_rates
 );
 
 INSERT INTO currencies (id, code, full_name, sign)
-VALUES (1, 'USD', 'Американский доллар', '$'),
-       (2, 'RUB', 'Российский рубль', '₽');
+VALUES (1, 'USD', 'American Dollar', '$'),
+       (2, 'RUB', 'Russian Rouble', '₽');
 
 INSERT INTO exchange_rates (id, baseCurrencyId, targetCurrencyId, rate)
 VALUES (1, 2, 1, 101);

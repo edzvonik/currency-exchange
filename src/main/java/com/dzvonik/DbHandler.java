@@ -42,19 +42,20 @@ public class DbHandler {
         }
     }
 
-    public List<String> getCurrencies() {
+    public List<Currency> getCurrencies() {
         try (Statement statement = this.connection.createStatement()) {
-            List<String> currencies = new ArrayList<>();
+            List<Currency> currencies = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM currencies;");
             while (resultSet.next()) {
-                currencies.add(
-                        "CODE: " + resultSet.getInt("code") +
-                        " FULL_NAME: " + resultSet.getString("full_name") +
-                        " SIGN: " + resultSet.getString("sign")
-                );
+                int id = resultSet.getInt("id");
+                String code = resultSet.getString("code");
+                String fullName = resultSet.getString("full_name");
+                String sign = resultSet.getString("sign");
+
+                Currency currency = new Currency(id, code, fullName, sign);
+                currencies.add(currency);
             }
             return currencies;
-
         } catch (SQLException e) {
             e.printStackTrace();
             return Collections.emptyList();
