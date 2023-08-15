@@ -42,9 +42,9 @@ public class DbHandler {
         }
     }
 
-    public List<String> getAll() {
+    public List<String> getCurrencies() {
         try (Statement statement = this.connection.createStatement()) {
-            List<String> currencies = new ArrayList<String>();
+            List<String> currencies = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM currencies;");
             while (resultSet.next()) {
                 currencies.add(
