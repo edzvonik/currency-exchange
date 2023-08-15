@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -30,7 +31,7 @@ public class DbHandler {
 
     private DbHandler() throws SQLException, IOException {
         DriverManager.registerDriver(new JDBC());
-        
+
         this.connection = DriverManager.getConnection(CON_STR);
 
         try (Statement statement = this.connection.createStatement()) {
@@ -59,6 +60,28 @@ public class DbHandler {
         } catch (SQLException e) {
             e.printStackTrace();
             return Collections.emptyList();
+        }
+    }
+
+    public Currency getCurrency(String code) {
+        String query = "SELECT id, code, full_name, sign FROM currencies WHERE code = ?;";
+        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setString(1, code);
+
+            ResultSet rs = statement.executeQuery();
+            Currency currency = null;
+
+            if (rs != null) {
+                int id = rs.getInt("id");
+                String fullName = rs.getString("full_name");
+                String sign = rs.getString("sign");
+                currency = new Currency(id, code, fullName, sign);
+            }
+
+            return currency;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
