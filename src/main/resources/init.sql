@@ -1,5 +1,3 @@
-DROP TABLE IF EXISTS currencies;
-
 CREATE TABLE currencies
 (
     id        INTEGER PRIMARY KEY,

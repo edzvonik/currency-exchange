@@ -1,8 +1,10 @@
-package com.dzvonik;
+package com.dzvonik.servlet;
 
+import com.dzvonik.model.dto.ErrorResponse;
+import com.dzvonik.repository.CurrencyRepository;
+import com.dzvonik.repository.JdbcCurrencyRepositoryImpl;
 import com.google.gson.Gson;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,23 +17,34 @@ import java.util.List;
 @WebServlet(urlPatterns = "/currencies")
 public class CurrenciesServlet extends HttpServlet {
 
+    private final CurrencyRepository currencyRepository = new JdbcCurrencyRepositoryImpl();
+
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<Currency> currencies = null;
-
-        try {
-            DbHandler db = DbHandler.getInstance();
-            currencies = db.getCurrencies();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        Gson gson = new Gson();
-        String currenciesJson = gson.toJson(currencies);
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         PrintWriter writer = resp.getWriter();
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
-        writer.write(currenciesJson);
+        Gson gson = new Gson();
+        String jsonResponse;
+
+        try {
+            List currencies = currencyRepository.findAll();
+
+            if (currencies.isEmpty()) {
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                ErrorResponse errorResponse = new ErrorResponse(HttpServletResponse.SC_NOT_FOUND, "Currencies are not in the database");
+                jsonResponse = gson.toJson(errorResponse);
+            } else {
+                resp.setStatus(HttpServletResponse.SC_OK);
+                jsonResponse = gson.toJson(currencies);
+            }
+        } catch (SQLException e) {
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            ErrorResponse errorResponse = new ErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            jsonResponse = gson.toJson(errorResponse);
+        }
+
+        writer.write(jsonResponse);
         writer.flush();
     }
 
