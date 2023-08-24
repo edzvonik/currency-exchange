@@ -71,6 +71,9 @@ public class JdbcCurrencyRepositoryImpl implements CurrencyRepository {
 
     @Override
     public Long save(Object entity) throws SQLException {
+        String query = "INSERT INTO currencies (code, full_name, sign) VALUES (?, ?, ?);";
+
+
         return null;
     }
 
