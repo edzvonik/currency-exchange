@@ -1,10 +1,12 @@
 package com.dzvonik.servlet;
 
+import com.dzvonik.model.Currency;
 import com.dzvonik.model.dto.ErrorResponse;
 import com.dzvonik.repository.CurrencyRepository;
 import com.dzvonik.repository.JdbcCurrencyRepositoryImpl;
 import com.google.gson.Gson;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +41,33 @@ public class CurrencyServlet extends HttpServlet {
                 resp.setStatus(HttpServletResponse.SC_OK);
                 jsonResponse = gson.toJson(currency);
             }
+        } catch (SQLException e) {
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            ErrorResponse errorResponse = new ErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            jsonResponse = gson.toJson(errorResponse);
+        }
+
+        writer.write(jsonResponse);
+        writer.flush();
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Currency newCurrency = new Currency(
+                req.getParameter("code"),
+                req.getParameter("fullName"),
+                req.getParameter("sign")
+        );
+
+        PrintWriter writer = resp.getWriter();
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        Gson gson = new Gson();
+        String jsonResponse;
+
+        try {
+            newCurrency = (Currency) currencyRepository.save(newCurrency);
+            jsonResponse = gson.toJson(newCurrency);
         } catch (SQLException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             ErrorResponse errorResponse = new ErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());

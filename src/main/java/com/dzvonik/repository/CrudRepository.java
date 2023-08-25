@@ -10,7 +10,7 @@ public interface CrudRepository<T> {
 
     List<T> findAll() throws SQLException;
 
-    Long save(T entity) throws SQLException;
+    T save(T entity) throws SQLException;
 
     void update(T entity) throws SQLException;
 

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class JdbcCurrencyRepositoryImpl implements CurrencyRepository {
+public class JdbcCurrencyRepositoryImpl implements CurrencyRepository<Currency> {
 
     private final DataSource dataSource = DataSourceConfig.getINSTANCE();
 
@@ -70,15 +70,27 @@ public class JdbcCurrencyRepositoryImpl implements CurrencyRepository {
     }
 
     @Override
-    public Long save(Object entity) throws SQLException {
-        String query = "INSERT INTO currencies (code, full_name, sign) VALUES (?, ?, ?);";
+    public Currency save(Currency currency) throws SQLException {
+        String query = "INSERT INTO currencies (id, code, full_name, sign) VALUES (NEXTVAL('currencies_sequence'), ?, ?, ?) RETURNING id;";
 
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setString(1, currency.getCode());
+            ps.setString(2, currency.getFullName());
+            ps.setString(3, currency.getSign());
+            ResultSet rs = ps.executeQuery();
 
-        return null;
+            while (rs.next()) {
+                currency.setId(rs.getInt("id"));
+            }
+
+        }
+
+        return currency;
     }
 
     @Override
-    public void update(Object entity) throws SQLException {
+    public void update(Currency entity) throws SQLException {
 
     }
 

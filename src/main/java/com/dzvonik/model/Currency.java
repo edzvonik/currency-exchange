@@ -14,15 +14,25 @@ public class Currency {
         this.sign = sign;
     }
 
+    public Currency(String code, String full_name, String sign) {
+        this.code = code;
+        this.fullName = full_name;
+        this.sign = sign;
+    }
+
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getCode() {
         return code;
     }
 
-    public String getFull_name() {
+    public String getFullName() {
         return fullName;
     }
 
