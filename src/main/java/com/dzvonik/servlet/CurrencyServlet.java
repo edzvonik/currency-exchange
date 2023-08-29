@@ -53,17 +53,41 @@ public class CurrencyServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Currency newCurrency = new Currency(
-                req.getParameter("code"),
-                req.getParameter("fullName"),
-                req.getParameter("sign")
-        );
-
         PrintWriter writer = resp.getWriter();
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
         Gson gson = new Gson();
         String jsonResponse;
+
+        String code = req.getParameter("code");
+        String fullName = req.getParameter("fullName");
+        String sign = req.getParameter("sign");
+
+        if (fullName == null || fullName.isBlank()) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            ErrorResponse errorResponse = new ErrorResponse(HttpServletResponse.SC_BAD_REQUEST, "Missing parameter - fullName");
+            jsonResponse = gson.toJson(errorResponse);
+            writer.write(jsonResponse);
+            return;
+        }
+
+        if (code == null || code.isBlank()) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            ErrorResponse errorResponse = new ErrorResponse(HttpServletResponse.SC_BAD_REQUEST, "Missing parameter - code");
+            jsonResponse = gson.toJson(errorResponse);
+            writer.write(jsonResponse);
+            return;
+        }
+
+        if (sign == null || sign.isBlank()) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            ErrorResponse errorResponse = new ErrorResponse(HttpServletResponse.SC_BAD_REQUEST, "Missing parameter - sign");
+            jsonResponse = gson.toJson(errorResponse);
+            writer.write(jsonResponse);
+            return;
+        }
+
+        Currency newCurrency = new Currency(code, fullName, sign);
 
         try {
             newCurrency = (Currency) currencyRepository.save(newCurrency);
