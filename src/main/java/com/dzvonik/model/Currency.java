@@ -7,16 +7,16 @@ public class Currency {
     private String fullName;
     private String sign;
 
-    public Currency(int id, String code, String full_name, String sign) {
+    public Currency(int id, String code, String fullName, String sign) {
         this.id = id;
         this.code = code;
-        this.fullName = full_name;
+        this.fullName = fullName;
         this.sign = sign;
     }
 
-    public Currency(String code, String full_name, String sign) {
+    public Currency(String code, String fullName, String sign) {
         this.code = code;
-        this.fullName = full_name;
+        this.fullName = fullName;
         this.sign = sign;
     }
 
