@@ -59,35 +59,11 @@ public class CurrencyServlet extends HttpServlet {
         Gson gson = new Gson();
         String jsonResponse;
 
-        String code = req.getParameter("code");
-        String fullName = req.getParameter("fullName");
-        String sign = req.getParameter("sign");
-
-        if (fullName == null || fullName.isBlank()) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            ErrorResponse errorResponse = new ErrorResponse(HttpServletResponse.SC_BAD_REQUEST, "Missing parameter - fullName");
-            jsonResponse = gson.toJson(errorResponse);
-            writer.write(jsonResponse);
-            return;
-        }
-
-        if (code == null || code.isBlank()) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            ErrorResponse errorResponse = new ErrorResponse(HttpServletResponse.SC_BAD_REQUEST, "Missing parameter - code");
-            jsonResponse = gson.toJson(errorResponse);
-            writer.write(jsonResponse);
-            return;
-        }
-
-        if (sign == null || sign.isBlank()) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            ErrorResponse errorResponse = new ErrorResponse(HttpServletResponse.SC_BAD_REQUEST, "Missing parameter - sign");
-            jsonResponse = gson.toJson(errorResponse);
-            writer.write(jsonResponse);
-            return;
-        }
-
-        Currency newCurrency = new Currency(code, fullName, sign);
+        Currency newCurrency = new Currency(
+                req.getParameter("code"),
+                req.getParameter("fullName"),
+                req.getParameter("sign")
+        );
 
         try {
             newCurrency = (Currency) currencyRepository.save(newCurrency);
