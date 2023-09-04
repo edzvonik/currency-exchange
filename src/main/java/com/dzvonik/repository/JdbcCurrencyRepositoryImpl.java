@@ -35,8 +35,8 @@ public class JdbcCurrencyRepositoryImpl implements CurrencyRepository<Currency> 
                 return Optional.empty();
             }
 
-            Currency currency = new Currency(
-                rs.getInt("id"),
+            Currency currency = new Currency (
+                rs.getLong("id"),
                 rs.getString("code"),
                 rs.getString("full_name"),
                 rs.getString("sign")
@@ -57,7 +57,7 @@ public class JdbcCurrencyRepositoryImpl implements CurrencyRepository<Currency> 
 
             while (rs.next()) {
                 Currency currency = new Currency(
-                        rs.getInt("id"),
+                        rs.getLong("id"),
                         rs.getString("code"),
                         rs.getString("full_name"),
                         rs.getString("sign")
@@ -81,7 +81,7 @@ public class JdbcCurrencyRepositoryImpl implements CurrencyRepository<Currency> 
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                currency.setId(rs.getInt("id"));
+                currency.setId(rs.getLong("id"));
             }
 
         }
