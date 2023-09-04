@@ -25,38 +25,42 @@ public class CurrencyFilter extends HttpFilter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        PrintWriter writer = response.getWriter();
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        Gson gson = new Gson();
-        String jsonResponse;
+        if (httpRequest.getMethod().equals("POST")) {
+            PrintWriter writer = response.getWriter();
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            Gson gson = new Gson();
+            String jsonResponse;
 
-        String code = httpRequest.getParameter("code");
-        String fullName = httpRequest.getParameter("fullName");
-        String sign = httpRequest.getParameter("sign");
-        List<String> missingValues = new ArrayList<>();
+            String code = httpRequest.getParameter("code");
+            String fullName = httpRequest.getParameter("fullName");
+            String sign = httpRequest.getParameter("sign");
+            List<String> missingValues = new ArrayList<>();
 
-        if (!isValidField(code)) {
-            missingValues.add("code");
+            if (!isValidField(code)) {
+                missingValues.add("code");
+            }
+
+            if (!isValidField(fullName)) {
+                missingValues.add("fullName");
+            }
+
+            if (!isValidField(sign)) {
+                missingValues.add("sign");
+            }
+
+            if (missingValues.size() == 0) {
+                chain.doFilter(request, response);
+            } else {
+                httpResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                ErrorResponse errorResponse = new ErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Missing values - " + missingValues.stream().collect(Collectors.joining(", ")));
+                jsonResponse = gson.toJson(errorResponse);
+                writer.write(jsonResponse);
+                writer.flush();
+            }
         }
 
-        if (!isValidField(fullName)) {
-            missingValues.add("fullName");
-        }
-
-        if (!isValidField(sign)) {
-            missingValues.add("sign");
-        }
-
-        if (missingValues.size() == 0) {
-            chain.doFilter(request, response);
-        } else {
-            httpResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            ErrorResponse errorResponse = new ErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Missin values - " + missingValues.stream().collect(Collectors.joining(", ")));
-            jsonResponse = gson.toJson(errorResponse);
-            writer.write(jsonResponse);
-            writer.flush();
-        }
+        chain.doFilter(httpRequest, httpResponse);
     }
 
     private boolean isValidField(String fieldValue) {
