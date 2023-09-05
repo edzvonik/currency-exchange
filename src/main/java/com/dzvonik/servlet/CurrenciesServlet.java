@@ -1,5 +1,6 @@
 package com.dzvonik.servlet;
 
+import com.dzvonik.model.Currency;
 import com.dzvonik.model.dto.ErrorResponse;
 import com.dzvonik.repository.CurrencyRepository;
 import com.dzvonik.repository.JdbcCurrencyRepositoryImpl;
@@ -22,13 +23,11 @@ public class CurrenciesServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         PrintWriter writer = resp.getWriter();
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
         Gson gson = new Gson();
         String jsonResponse;
 
         try {
-            List currencies = currencyRepository.findAll();
+            List<Currency> currencies = currencyRepository.findAll();
 
             if (currencies.isEmpty()) {
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);

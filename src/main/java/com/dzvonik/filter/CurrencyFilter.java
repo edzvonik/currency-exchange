@@ -1,4 +1,4 @@
-package com.dzvonik.servlet;
+package com.dzvonik.filter;
 
 import com.dzvonik.model.dto.ErrorResponse;
 import com.google.gson.Gson;
@@ -27,8 +27,6 @@ public class CurrencyFilter extends HttpFilter {
 
         if (httpRequest.getMethod().equals("POST")) {
             PrintWriter writer = response.getWriter();
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
             Gson gson = new Gson();
             String jsonResponse;
 
