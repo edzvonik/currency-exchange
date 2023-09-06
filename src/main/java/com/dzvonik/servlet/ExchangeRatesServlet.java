@@ -3,6 +3,7 @@ package com.dzvonik.servlet;
 import com.dzvonik.model.ExchangeRate;
 import com.dzvonik.model.dto.ErrorResponse;
 import com.dzvonik.repository.CrudRepository;
+import com.dzvonik.repository.ExchangeRateRepository;
 import com.dzvonik.repository.JdbcExchangeRateRepositoryImpl;
 import com.google.gson.Gson;
 
@@ -19,7 +20,7 @@ import java.util.List;
 @WebServlet(urlPatterns = "/exchangeRates")
 public class ExchangeRatesServlet extends HttpServlet {
 
-    private final CrudRepository exchangeRateRepository = new JdbcExchangeRateRepositoryImpl();
+    private final ExchangeRateRepository exchangeRateRepository = new JdbcExchangeRateRepositoryImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

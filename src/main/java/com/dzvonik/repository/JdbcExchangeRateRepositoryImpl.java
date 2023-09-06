@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class JdbcExchangeRateRepositoryImpl implements CrudRepository<ExchangeRate> {
+public class JdbcExchangeRateRepositoryImpl implements ExchangeRateRepository<ExchangeRate> {
 
     private final DataSource dataSource = DataSourceConfig.getINSTANCE();
 
@@ -41,21 +41,21 @@ public class JdbcExchangeRateRepositoryImpl implements CrudRepository<ExchangeRa
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                Currency baseCurrency = new Currency (
+                Currency baseCurrency = new Currency(
                         rs.getLong("base_id"),
                         rs.getString("base_code"),
                         rs.getString("base_full_name"),
                         rs.getString("base_sign")
                 );
 
-                Currency targetCurrency = new Currency (
+                Currency targetCurrency = new Currency(
                         rs.getLong("target_id"),
                         rs.getString("target_code"),
                         rs.getString("target_full_name"),
                         rs.getString("target_sign")
                 );
 
-                ExchangeRate exchangeRate = new ExchangeRate (
+                ExchangeRate exchangeRate = new ExchangeRate(
                         rs.getLong("id"),
                         baseCurrency,
                         targetCurrency,
@@ -86,6 +86,60 @@ public class JdbcExchangeRateRepositoryImpl implements CrudRepository<ExchangeRa
 
     @Override
     public void delete(Long id) throws SQLException {
+
+    }
+
+    @Override
+    public Optional<ExchangeRate> findByPair(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
+        final String query = "SELECT er.id AS id,\n" +
+                "bc.id AS base_id,\n" +
+                "bc.code AS base_code,\n" +
+                "bc.full_name AS base_full_name,\n" +
+                "bc.sign AS base_sign,\n" +
+                "tc.id AS target_id,\n" +
+                "tc.code AS target_code,\n" +
+                "tc.full_name AS target_full_name,\n" +
+                "tc.sign AS target_sign,\n" +
+                "er.rate AS rate\n" +
+                "FROM exchange_rates er\n" +
+                "JOIN currencies bc ON er.base_currency_id = bc.id\n" +
+                "JOIN currencies tc ON er.target_currency_id = tc.id\n" +
+                "WHERE bc.code = ? AND tc.code = ?;\n";
+
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setString(1, baseCurrencyCode);
+            ps.setString(2, targetCurrencyCode);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (!rs.next()) {
+                return Optional.empty();
+            }
+
+            Currency baseCurrency = new Currency(
+                    rs.getLong("base_id"),
+                    rs.getString("base_code"),
+                    rs.getString("base_full_name"),
+                    rs.getString("base_sign")
+            );
+
+            Currency targetCurrency = new Currency(
+                    rs.getLong("target_id"),
+                    rs.getString("target_code"),
+                    rs.getString("target_full_name"),
+                    rs.getString("target_sign")
+            );
+
+            ExchangeRate exchangeRate = new ExchangeRate(
+                    rs.getLong("id"),
+                    baseCurrency,
+                    targetCurrency,
+                    rs.getDouble("rate")
+            );
+
+            return Optional.of(exchangeRate);
+        }
 
     }
 
