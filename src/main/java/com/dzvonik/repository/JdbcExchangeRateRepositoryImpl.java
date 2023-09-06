@@ -96,14 +96,12 @@ public class JdbcExchangeRateRepositoryImpl implements ExchangeRateRepository<Ex
                 rs.getString("target_sign")
         );
 
-        ExchangeRate exchangeRate = new ExchangeRate(
+        return new ExchangeRate(
                 rs.getLong("id"),
                 baseCurrency,
                 targetCurrency,
                 rs.getDouble("rate")
         );
-
-        return exchangeRate;
     }
 
     @Override
