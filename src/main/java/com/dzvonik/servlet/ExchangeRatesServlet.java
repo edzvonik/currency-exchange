@@ -2,7 +2,6 @@ package com.dzvonik.servlet;
 
 import com.dzvonik.model.ExchangeRate;
 import com.dzvonik.model.dto.ErrorResponse;
-import com.dzvonik.repository.CrudRepository;
 import com.dzvonik.repository.ExchangeRateRepository;
 import com.dzvonik.repository.JdbcExchangeRateRepositoryImpl;
 import com.google.gson.Gson;
@@ -29,11 +28,11 @@ public class ExchangeRatesServlet extends HttpServlet {
         String jsonResponse;
 
         try {
-            List<ExchangeRate> exchangeRates = exchangeRateRepository.findAll();
+            List exchangeRates = exchangeRateRepository.findAll();
 
             if (exchangeRates.isEmpty()) {
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                ErrorResponse errorResponse = new ErrorResponse(HttpServletResponse.SC_NOT_FOUND, "Currencies are not in the database");
+                ErrorResponse errorResponse = new ErrorResponse(HttpServletResponse.SC_NOT_FOUND, "Exchange rates is missing");
                 jsonResponse = gson.toJson(errorResponse);
             } else {
                 resp.setStatus(HttpServletResponse.SC_OK);
@@ -46,7 +45,6 @@ public class ExchangeRatesServlet extends HttpServlet {
         }
 
         writer.write(jsonResponse);
-        writer.flush();
     }
 
 }

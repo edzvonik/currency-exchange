@@ -31,7 +31,7 @@ public class CurrenciesServlet extends HttpServlet {
 
             if (currencies.isEmpty()) {
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                ErrorResponse errorResponse = new ErrorResponse(HttpServletResponse.SC_NOT_FOUND, "Currencies are not in the database");
+                ErrorResponse errorResponse = new ErrorResponse(HttpServletResponse.SC_NOT_FOUND, "Currencies is missing");
                 jsonResponse = gson.toJson(errorResponse);
             } else {
                 resp.setStatus(HttpServletResponse.SC_OK);
@@ -44,7 +44,6 @@ public class CurrenciesServlet extends HttpServlet {
         }
 
         writer.write(jsonResponse);
-        writer.flush();
     }
 
 }
