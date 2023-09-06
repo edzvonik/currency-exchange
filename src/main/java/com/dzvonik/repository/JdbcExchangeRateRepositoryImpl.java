@@ -41,52 +41,11 @@ public class JdbcExchangeRateRepositoryImpl implements ExchangeRateRepository<Ex
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                Currency baseCurrency = new Currency(
-                        rs.getLong("base_id"),
-                        rs.getString("base_code"),
-                        rs.getString("base_full_name"),
-                        rs.getString("base_sign")
-                );
-
-                Currency targetCurrency = new Currency(
-                        rs.getLong("target_id"),
-                        rs.getString("target_code"),
-                        rs.getString("target_full_name"),
-                        rs.getString("target_sign")
-                );
-
-                ExchangeRate exchangeRate = new ExchangeRate(
-                        rs.getLong("id"),
-                        baseCurrency,
-                        targetCurrency,
-                        rs.getDouble("rate")
-                );
-
-                exchangeRates.add(exchangeRate);
+                exchangeRates.add(getExchangeRate(rs));
             }
         }
 
         return exchangeRates;
-    }
-
-    @Override
-    public Optional<ExchangeRate> findById(Long id) throws SQLException {
-        return Optional.empty();
-    }
-
-    @Override
-    public ExchangeRate save(ExchangeRate entity) throws SQLException {
-        return null;
-    }
-
-    @Override
-    public void update(ExchangeRate entity) throws SQLException {
-
-    }
-
-    @Override
-    public void delete(Long id) throws SQLException {
-
     }
 
     @Override
@@ -117,29 +76,53 @@ public class JdbcExchangeRateRepositoryImpl implements ExchangeRateRepository<Ex
                 return Optional.empty();
             }
 
-            Currency baseCurrency = new Currency(
-                    rs.getLong("base_id"),
-                    rs.getString("base_code"),
-                    rs.getString("base_full_name"),
-                    rs.getString("base_sign")
-            );
-
-            Currency targetCurrency = new Currency(
-                    rs.getLong("target_id"),
-                    rs.getString("target_code"),
-                    rs.getString("target_full_name"),
-                    rs.getString("target_sign")
-            );
-
-            ExchangeRate exchangeRate = new ExchangeRate(
-                    rs.getLong("id"),
-                    baseCurrency,
-                    targetCurrency,
-                    rs.getDouble("rate")
-            );
-
-            return Optional.of(exchangeRate);
+            return Optional.of(getExchangeRate(rs));
         }
+
+    }
+
+    private ExchangeRate getExchangeRate(ResultSet rs) throws SQLException {
+        Currency baseCurrency = new Currency(
+                rs.getLong("base_id"),
+                rs.getString("base_code"),
+                rs.getString("base_full_name"),
+                rs.getString("base_sign")
+        );
+
+        Currency targetCurrency = new Currency(
+                rs.getLong("target_id"),
+                rs.getString("target_code"),
+                rs.getString("target_full_name"),
+                rs.getString("target_sign")
+        );
+
+        ExchangeRate exchangeRate = new ExchangeRate(
+                rs.getLong("id"),
+                baseCurrency,
+                targetCurrency,
+                rs.getDouble("rate")
+        );
+
+        return exchangeRate;
+    }
+
+    @Override
+    public Optional<ExchangeRate> findById(Long id) throws SQLException {
+        return Optional.empty();
+    }
+
+    @Override
+    public ExchangeRate save(ExchangeRate entity) throws SQLException {
+        return null;
+    }
+
+    @Override
+    public void update(ExchangeRate entity) throws SQLException {
+
+    }
+
+    @Override
+    public void delete(Long id) throws SQLException {
 
     }
 
